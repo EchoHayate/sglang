@@ -48,7 +48,7 @@ class ModelConfig:
         dtype: str = "auto",
         quantization: Optional[str] = None,
         override_config_file: Optional[str] = None,
-        is_draft_model: bool = False,
+        is_draft_model: bool = True,
     ) -> None:
 
         self.model_path = model_path
