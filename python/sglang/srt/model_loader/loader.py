@@ -145,7 +145,14 @@ def _initialize_model(
     load_config: LoadConfig,
 ) -> nn.Module:
     """Initialize a model with the given configurations."""
-    model_class, _ = get_model_architecture(model_config)
+    model_class, arch_name = get_model_architecture(model_config)
+    timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+    separator = "=" * 80
+    
+    print(f"\n{separator}")
+    print(f"[{timestamp}] MODEL INITIALIZATION START")
+    print(f"Loading model class: {model_class.__name__}, Architecture: {arch_name}")
+    print(f"{separator}\n")
     packed_modules_mapping = getattr(model_class, "packed_modules_mapping", {})
     quant_config = _get_quantization_config(
         model_config, load_config, packed_modules_mapping

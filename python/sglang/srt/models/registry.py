@@ -33,7 +33,7 @@ class _ModelRegistry:
             f"Model architectures {architectures} are not supported for now. "
             f"Supported architectures: {all_supported_archs}"
         )
-
+# load the model class
     def _try_load_model_cls(self, model_arch: str) -> Optional[Type[nn.Module]]:
         if model_arch not in self.models:
             return None
@@ -50,7 +50,7 @@ class _ModelRegistry:
             logger.warning("No model architectures are specified")
 
         return architectures
-
+# resolve the model after loading
     def resolve_model_cls(
         self,
         architectures: Union[str, List[str]],
