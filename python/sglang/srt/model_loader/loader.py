@@ -378,12 +378,56 @@ class DefaultModelLoader(BaseModelLoader):
         device_config: DeviceConfig,
     ) -> nn.Module:
         target_device = torch.device(device_config.device)
+        # for test
+        print(f"\n{'='*80}")
+        print(f"[DEBUG] Loading model with config: {model_config}")
+        print(f"[DEBUG] Target device: {target_device}")
+
+
         with set_default_torch_dtype(model_config.dtype):
             with target_device:
                 model = _initialize_model(
                     model_config,
                     self.load_config,
                 )
+
+
+            print(f"\n[DEBUG] Model parameter names:")
+            for name,param in model.named_parameters():
+                print(f"-{name}")
+            all_weights = self._get_all_weights(model_config, model)
+            print(f"\n[DEBUG] Weight parameter names from file:")
+            weight_names = list(all_weights.keys())
+            for name in weight_names[:100]:  # 限制打印数量，避免刷屏
+                print(f"  - {name}")
+            if len(weight_names) > 100:
+                print(f"  - ...and {len(weight_names)-100} more")
+            # 检查缺失的参数
+            model_param_names = set(name for name, _ in model.named_parameters())
+            weight_param_names = set(all_weights.keys())
+            missing_params = model_param_names - weight_param_names
+            extra_params = weight_param_names - model_param_names
+
+
+            if missing_params:
+                print(f"\n[WARNING] Parameters missing in weights: {len(missing_params)}")
+                for name in list(missing_params)[:10]:  # 只打印前10个
+                    print(f"  - {name}")
+                if len(missing_params) > 10:
+                    print(f"  - ...and {len(missing_params)-10} more")
+            
+            if extra_params:
+                print(f"\n[WARNING] Extra parameters in weights: {len(extra_params)}")
+                for name in list(extra_params)[:10]:  # 只打印前10个
+                    print(f"  - {name}")
+                if len(extra_params) > 10:
+                    print(f"  - ...and {len(extra_params)-10} more")
+            
+            # 特别检查报错中缺失的参数
+            if 'model.layers.24.mlp.experts.w2_weight_scale_inv' in missing_params:
+                print(f"\n[ERROR] Critical missing parameter: model.layers.24.mlp.experts.w2_weight_scale_inv")
+                print(f"        This indicates a mismatch between model architecture and weights.")
+            
 
             self.load_weights_and_postprocess(
                 model, self._get_all_weights(model_config, model), target_device
