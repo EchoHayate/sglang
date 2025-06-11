@@ -393,15 +393,15 @@ class DefaultModelLoader(BaseModelLoader):
 
 # ####################################
             print(f"\n[DEBUG] Model parameter names:")
-            # for name,param in model.named_parameters():
-            #     print(f"-{name}")
+            for name,param in model.named_parameters():
+                print(f"-{name}")
             all_weights = self._get_all_weights(model_config, model)
             print(f"\n[DEBUG] Weight parameter names from file:")
             # weight_names = list(all_weights.keys())
             for name in weight_names[:10]:  # 限制打印数量，避免刷屏
                 print(f"  - {name}")
-            if len(weight_names) > 100:
-                print(f"  - ...and {len(weight_names)-100} more")
+            if len(weight_names) > 10:
+                print(f"  - ...and {len(weight_names)-10} more")
             # 检查缺失的参数
             model_param_names = set(name for name, _ in model.named_parameters())
             weight_param_names = set(all_weights.keys())
