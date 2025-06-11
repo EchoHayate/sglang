@@ -391,14 +391,14 @@ class DefaultModelLoader(BaseModelLoader):
                     self.load_config,
                 )
 
-
+# ####################################
             print(f"\n[DEBUG] Model parameter names:")
-            for name,param in model.named_parameters():
-                print(f"-{name}")
+            # for name,param in model.named_parameters():
+            #     print(f"-{name}")
             all_weights = self._get_all_weights(model_config, model)
             print(f"\n[DEBUG] Weight parameter names from file:")
-            weight_names = list(all_weights.keys())
-            for name in weight_names[:100]:  # 限制打印数量，避免刷屏
+            # weight_names = list(all_weights.keys())
+            for name in weight_names[:10]:  # 限制打印数量，避免刷屏
                 print(f"  - {name}")
             if len(weight_names) > 100:
                 print(f"  - ...and {len(weight_names)-100} more")
@@ -423,12 +423,7 @@ class DefaultModelLoader(BaseModelLoader):
                 if len(extra_params) > 10:
                     print(f"  - ...and {len(extra_params)-10} more")
             
-            # 特别检查报错中缺失的参数
-            if 'model.layers.24.mlp.experts.w2_weight_scale_inv' in missing_params:
-                print(f"\n[ERROR] Critical missing parameter: model.layers.24.mlp.experts.w2_weight_scale_inv")
-                print(f"        This indicates a mismatch between model architecture and weights.")
-            
-
+# #######################
             self.load_weights_and_postprocess(
                 model, self._get_all_weights(model_config, model), target_device
             )
